@@ -1,0 +1,91 @@
+---
+title: "gapminder-wrangle"
+author: "Serena"
+date: "16 aprile 2020"
+output: html_document
+---
+
+## Wrang gapminder data using dplyr
+
+We will use the read_csv() function from the readr package
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+
+
+## read gapminder csv. Note the readr:: prefix identifies which package it's in
+gapminder <- readr::read_csv('https://raw.githubusercontent.com/OHI-Science/data-science-training/master/data/gapminder.csv') 
+
+head(gapminder) # shows first 6
+tail(gapminder) # shows last 6
+
+head(gapminder, 10) # shows first X that you indicate
+tail(gapminder, 12) # guess what this does!
+```
+
+```{r}
+str(gapminder) # ?str - displays the structure of an object
+```
+```{r}
+names(gapminder)
+dim(gapminder)    # ?dim dimension
+ncol(gapminder)   # ?ncol number of columns
+nrow(gapminder)   # ?nrow number of rows
+```
+```{r}
+summary(gapminder)
+
+
+library(skimr) # install.packages('skimr')
+skim(gapminder)
+```
+
+```{r}
+knitr::include_graphics("img 1.png") ##per includere immagini
+```
+
+```{r}
+head(gapminder)
+
+```
+What was the average life expectency in Brazil between 1987 and 2007?
+
+```{r}
+br<-filter(gapminder, country=="Brazil")
+mean(br$lifeExp)
+```
+
+I’ve advised you to think “gets” whenever you see the assignment operator, <-. Similarly, you should think “and then” whenever you see the pipe operator, %>%.
+
+###Exercise 1
+
+Calculate the population in thousands for all Asian countries in the year 2007 and add it as a new column.
+
+Then, sync to Github.com (pull, stage, commit, push).
+```{r}
+asian<-gapminder %>% 
+          filter(continent=="Asia", year=="2007" ) %>%
+          mutate(sum(pop))
+```
+
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
