@@ -64,9 +64,35 @@ Calculate the population in thousands for all Asian countries in the year 2007 a
 
 Then, sync to Github.com (pull, stage, commit, push).
 ```{r}
-asian<-gapminder %>% 
-          filter(continent=="Asia", year=="2007" ) %>%
-          mutate(sum(pop))
+gapminder %>% 
+          filter(continent=="Asia", year==2007 ) %>%
+          mutate(pop_thousand=pop/1000)  %>%
+          select(country, year, pop_thousand) #this cleans up the database byt isn't necessary
+          
+
+```
+
+*What is the maximum GDP per continent across all years?
+```{r}
+gapminder%>%
+  mutate(gdp=pop*gdpPercap)%>%  #adds new variables
+  group_by(continent)     %>%
+  mutate(max_gdp= max(gdp))%>%
+  filter(gdp==max_gdp)
+
+```
+
+1. arrange your data frame in descending order (opposite of what we’ve done). Expect that this is possible: ?arrange
+2. save your data frame as a variable
+3. find the maximum life expectancy for countries in Asia. What is the earliest year you encounter? The latest? Hint: you can use or base::max and dplyr::arrange()…
+
+Knit your RMarkdown file, and sync it to GitHub (pull, stage, commit, push)
+```{r}
+asia_lifexp<-gapminder%>%
+  filter(continent=="Asia")%>%
+  group_by(country)%>%
+  filter(lifeExp==max(lifeExp))%>%
+  arrange(year)
 ```
 
 
