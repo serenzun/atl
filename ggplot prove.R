@@ -44,7 +44,7 @@ ggplot(data = acadia, aes(x = year, y = visitors)) +
        x = "Year") +
   theme_bw()
 
-
+kkk
 
 
 install.packages("plotly")
