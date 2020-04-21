@@ -6,7 +6,7 @@ output: html_document
 ---
 
 ## Wrang gapminder data using dplyr
-
+####ctrl + shift+ m shortcut per %>% 
 We will use the read_csv() function from the readr package
 
 ```{r setup, include=FALSE}
@@ -95,16 +95,112 @@ asia_lifexp<-gapminder%>%
   arrange(year)
 ```
 
++dplyr allow you to filter() by rows and select() by columns, create new columns with mutate(), and group_by() unique column values to apply summarize() for new columns that define aggregate values across groupings.
 
-## R Markdown
+```{r}
+gap_wide<-readr::read_csv('https://raw.githubusercontent.com/OHI-Science/data-science-training/master/data/gapminder_wide.csv')
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+str(gap_wide)
+head(gap_wide)
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
 ```
+```{r}
+gap_long <- gap_wide %>% 
+  gather(key   = obstype_year,
+         value = obs_values)
+str(gap_long)
+tail(gap_long)
+?gather
+gap_long <- gap_wide %>% 
+  gather(key   = obstype_year,
+         value = obs_values,
+         dplyr::starts_with('pop'),
+         dplyr::starts_with('lifeExp'),
+         dplyr::starts_with('gdpPercap'))  #here i'm listing all the columns to use in gather
+
+str(gap_long)
+head(gap_long)
+tail(gap_long)
+```
+```{r}
+gap_long <- gap_wide %>% 
+  gather(key   = obstype_year,
+         value = obs_values,
+         -continent, -country) %>%
+  separate(obstype_year,
+           into = c('obs_type','year'),
+           sep = "_",
+           convert = TRUE) #this ensures that the year column is an integer rather than a character
+
+head(gap_long)
+tail(gap_long)
+```
+
+
+```{r}
+canada_df <- gap_long %>%
+  filter(obs_type == "lifeExp",
+         country == "Canada")
+
+ggplot(canada_df, aes(x = year, y = obs_values)) +
+  geom_line()
+```
+
+Using gap_long, calculate and plot the the mean life expectancy for each continent over time from 1982 to 2007. Give your plot a title and assign x and y labels. Hint: do this in two steps. First, do the logic and calculations using dplyr::group_by() and dplyr::summarize(). Second, plot using ggplot().
+
+```{r}
+mean_life_ext<-gap_long %>% 
+  filter(obs_type=="lifeExp", year>1980) %>% 
+  group_by(continent, year) %>% 
+  summarize(mean_le=mean(obs_values)) %>% 
+  ungroup()  #removes the grouping and it’s good to get in the habit of using it after a     group_by()
+mean_life_ext
+
+library(ggplot2)
+ggplot(data=mean_life_ext, aes(x=year, y=mean_le, color=continent))+
+         geom_line()+
+  labs(title="Mean life Expectancy",
+    x="Years", y="Mean")
+
+
+
+## Additional customization
+ggplot(data = continents, aes(x = year, y = mean_le, color = continent)) + 
+  geom_line() +
+  labs(title = "Mean life expectancy",
+       x = "Year",
+       y = "Age (years)",
+       color = "Continent") +
+  theme_classic() +
+  scale_fill_brewer(palette = "Blues")  
+
+
+# solution (no peeking!)
+continents <- gap_long %>% 
+  filter(obs_type == "lifeExp", 
+         year > 1980) %>% 
+  group_by(continent, year) %>% 
+  summarize(mean_le = mean(obs_values)) %>%
+  ungroup()
+
+ggplot(data = continents, aes(x = year, y = mean_le, color = continent)) + 
+  geom_line() +
+  labs(title = "Mean life expectancy",
+       x = "Year",
+       y = "Age (years)") 
+
+## Additional customization
+ggplot(data = continents, aes(x = year, y = mean_le, color = continent)) + 
+  geom_line() +
+  labs(title = "Mean life expectancy",
+       x = "Year",
+       y = "Age (years)",
+       color = "Continent") +
+  theme_classic() +
+  scale_fill_brewer(palette = "Blues")  
+
+```
+
 
 ## Including Plots
 
