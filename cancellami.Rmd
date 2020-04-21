@@ -202,9 +202,45 @@ ggplot(data = continents, aes(x = year, y = mean_le, color = continent)) +
 ```
 
 
-## Including Plots
 
-You can also embed plots, for example:
+```{r}
+gap_normal <- gap_long %>% 
+  spread(obs_type, obs_values)
+
+dim(gap_normal)
+dim(gapminder)
+names(gap_normal)
+names(gapminder)
+```
+
+
+
+>7.6 Exercise
+Convert gap_long all the way back to gap_wide. Hint: Do this in 2 steps. First, create appropriate labels for all our new variables (variable_year combinations) with the opposite of separate: tidyr::unite(). Second, spread() that variable_year column into wider format.
+
+Knit the R Markdown file and sync to Github (pull, stage, commit, push)
+```{r}
+str(gap_long)
+str(gap_wide)
+gap_wide2<-gap_long %>% 
+unite(col=var_names,obs_type, year, sep="_") %>% 
+spread(key = var_names, value = obs_values)
+str(gap_wide2)
+
+
+head(gap_long) # remember the columns
+
+gap_wide_new <- gap_long %>% 
+  # first unite obs_type and year into a new column called var_names. Separate by _
+  unite(col = var_names, obs_type, year, sep = "_") %>% 
+  # then spread var_names out by key-value pair.
+  spread(key = var_names, value = obs_values)
+str(gap_wide_new)
+```
+
+
+
+
 
 ```{r pressure, echo=FALSE}
 plot(pressure)
