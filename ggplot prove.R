@@ -46,6 +46,13 @@ ggplot(data = acadia, aes(x = year, y = visitors)) +
 
 kkk
 
+my_plot<-ggplot(data=mass)+
+  geom_bar(aes(x=type, fill=park_name))+
+  labs(x="",
+       y="")+
+  theme(axis.text.x = element_text(angle=45, hjust=1, size=7))
 
 install.packages("plotly")
 library(plotly)
+
+ggplotly(my_plot)
